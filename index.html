@@ -110,6 +110,24 @@
         .divSubGrp {
             border-bottom: 1px solid red;
         }
+		a#readme:link, a#readme:visited {
+          background-color: #4CAF50; /* Green */
+          border: none;
+          color: black;
+          padding: 20px;
+          text-align: center;
+          text-decoration: none;
+          display: inline-block;
+          font-size: 16px;
+          margin: 4px 2px;
+          cursor: pointer;
+          
+        }
+
+        a#readme:hover, a#readme:active {
+          background-color: red;
+          
+        }
     </style>
 
     <script type="text/javascript">
@@ -118,11 +136,15 @@
         $(document).ready(function () {
 
         });
+		//mystaticfun() declaration
+		//declares array onload to be proccessed
         function mystaticfun(){
             mainarray=["Manchester United,1", "Barcelona,2", "Manchester City,3", "Chelsea,4", "Liverpool,5", "Arsenal,6", "Real Mardrid,7", "Brazil,8", "Bologana,9", "Empoli,10", "Genoa,11", "Napoli,12", "Parma,13", "Torino,14", "South Hampton,15", "Crystal Place,16", "Cardiff City,17", "Fulham,18", "Everton,19", "AC Milan,20", "Angers,21", "AS Roma,22", "Atlanta,23", "Bristol,24", "Derby,25"];
             var staticdata=processarraydata(mainarray);
             createGrid(staticdata);
         }
+		//handleFiles() function
+		//passes the csv fie to the functon
         function handleFiles(files) {
             //alert("1");
             // Check for the various File API support.
@@ -133,6 +155,7 @@
                 alert('FileReader are not supported in this browser.');
             }
         }
+		//getAsText() function to proccess csv file
         function getAsText(fileToRead) {
             var reader = new FileReader();
             // Handle errors load
@@ -141,12 +164,14 @@
             // Read file into memory as UTF-8
             reader.readAsText(fileToRead);
         }
+		//loadHandler() calls all neccesary function
         function loadHandler(event) {
             var csv = event.target.result;
             mainarray=passtoArray(csv);
             var data=processarraydata(mainarray);
             createGrid(data);
         }
+		//createGrid() function to create jQuery function
         function createGrid(data) {
             $("#jqxgrid").jqxGrid(
                 {
@@ -163,6 +188,7 @@
                     ]
                 });
         }
+		//parses the array to required specification
         function getData(data) {
             var source =
             {
@@ -181,7 +207,7 @@
             var dataAdapter = new $.jqx.dataAdapter(source);
             return dataAdapter;
         }
-
+		//names for groups
         function passtoArray(csv) {
     		var allTextLines = csv.split(/\r\n|\n/);
    			var tarr=[];
@@ -225,6 +251,7 @@
                 alert("Canno't read file !");
             }
         }
+		//grouping() function for making groups 
         function grouping() {
             debugger;
             var namespergroup = parseInt($('.pergroup').val()),
@@ -270,7 +297,7 @@
         <form class="form-horizontal well">
             <legend>
                 <h3>
-                    <div id="title">CSV File Team Generator</div>
+                    <div id="title">CSV File Groups Generator</div>
                 </h3>
             </legend>
 
@@ -293,5 +320,6 @@
         <button onclick="grouping()">Make Groups</button>
         <div class="groups">Groups Displayed <br></div>
     </div>
+	<div align="center"><a id='readme' href="https://github.com/GopalaSai7120/OMIS694_project.github.io/blob/master/Readme_guide.pdf" target="_blank">Instruction Guide</a></div>
 </body>
 </html>
