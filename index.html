@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title id='Description'>This example shows how to create a Grid from Array data.</title>
+    <link rel="stylesheet" href="jqwidgets/styles/jqx.base.css" type="text/css" />
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxcore.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdata.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxbuttons.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxscrollbar.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxmenu.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.selection.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.sort.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.filter.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxlistbox.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxdropdownlist.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxgrid.pager.js"></script>
+    <script type="text/javascript" src="jqwidgets/jqxcheckbox.js"></script>
+    <style>
+        /* NOTE: The styles were added inline because Prefixfree needs access to your styles and they must be inlined if they are on local disk! */
+        *, *:before, *:after {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: sans-serif;
+            font-size: 17px;
+            padding: 1em;
+            background-image:linear-gradient(120deg, #99ff99 0%, #6699ff 100%);
+        }
+
+        .toggle-wrap a {
+            display: inline-block;
+            background: #444;
+            border-radius: 1000px;
+            position: relative;
+            width: 3em;
+            height: 1.25em;
+            vertical-align: middle;
+            margin: 0 0.5em;
+            
+        }
+
+            .toggle-wrap a strong {
+                display: none;
+                
+            }
+
+        .switch {
+            position: absolute;
+            top: 0.1em;
+            left: 0.15em;
+            height: 1em;
+            width: 1.5em;
+            background: #fff;
+            border-radius: 1000px;
+            transition: 0.3s;
+        }
+
+        .alt .switch {
+            left: calc(100% - 1.6em);
+        }
+
+        .numgroups-wrap {
+            display: none;
+        }
+
+        .alt .numgroups-wrap {
+            display: inherit;
+        }
+
+        .alt .pergroup-wrap {
+            display: none;
+        }
+
+        input,textarea, button {
+            font-size: 1em;
+            padding: 0.25em;
+        }
+
+        .groups {
+            padding: 1em;
+            background: #ddd;
+            margin: 1em 0;
+            background: linear-gradient(to top right, #ff9966 0%, #ff6666 100%);
+        }
+
+        .groupDiv {
+            display: inline-block;
+            vertical-align: top;
+            background: #fff;
+            padding: 1em;
+            margin: 0.25em;
+            width: 18%;
+            border-radius: 3px;
+            box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.1);
+        }
+
+            .groupDiv h2 {
+                margin: 0;
+            }
+
+        .divGroup {
+            text-align: center;
+        }
+
+        .divSubGrp {
+            border-bottom: 1px solid red;
+        }
+    </style>
+
+    <script type="text/javascript">
+        var grpingCount = 0;
+        var mainarray=[];
+        $(document).ready(function () {
+
+        });
+        function mystaticfun(){
+            mainarray=["Manchester United,1", "Barcelona,2", "Manchester City,3", "Chelsea,4", "Liverpool,5", "Arsenal,6", "Real Mardrid,7", "Brazil,8", "Bologana,9", "Empoli,10", "Genoa,11", "Napoli,12", "Parma,13", "Torino,14", "South Hampton,15", "Crystal Place,16", "Cardiff City,17", "Fulham,18", "Everton,19", "AC Milan,20", "Angers,21", "AS Roma,22", "Atlanta,23", "Bristol,24", "Derby,25"];
+            var staticdata=processarraydata(mainarray);
+            createGrid(staticdata);
+        }
+        function handleFiles(files) {
+            //alert("1");
+            // Check for the various File API support.
+            if (window.FileReader) {
+                // FileReader are supported.
+                getAsText(files[0]);
+            } else {
+                alert('FileReader are not supported in this browser.');
+            }
+        }
+        function getAsText(fileToRead) {
+            var reader = new FileReader();
+            // Handle errors load
+            reader.onload = loadHandler;
+            reader.onerror = errorHandler;
+            // Read file into memory as UTF-8
+            reader.readAsText(fileToRead);
+        }
+        function loadHandler(event) {
+            var csv = event.target.result;
+            mainarray=passtoArray(csv);
+            var data=processarraydata(mainarray);
+            createGrid(data);
+        }
+        function createGrid(data) {
+            $("#jqxgrid").jqxGrid(
+                {
+                    source: getData(data),
+                    sortable: true,
+                    filterable: true,
+                    pageable: true,
+                    autoheight: true,
+                    columns: [
+
+                        { text: 'Name', dataField: 'Name' },
+                        { text: 'Id', dataField: 'Id' },
+
+                    ]
+                });
+        }
+        function getData(data) {
+            var source =
+            {
+                localdata: data,
+                datatype: "array",
+                sortcolumn: 'Id',
+                sortdirection: 'asc',
+                datafields:
+                    [
+                        { name: 'Name', type: 'string' },
+                        { name: 'Id', type: 'integer' },
+
+                    ]
+            };
+
+            var dataAdapter = new $.jqx.dataAdapter(source);
+            return dataAdapter;
+        }
+
+        function passtoArray(csv) {
+    		var allTextLines = csv.split(/\r\n|\n/);
+   			var tarr=[];
+    
+    		while (allTextLines.length) {
+        		tarr.push(allTextLines.shift());
+       	 
+    		}
+    		console.log("tarr");
+			console.log(tarr);
+			var finalNames=[];
+			for (var i=1;i<((tarr.length)-1);i++){
+				finalNames.push(tarr[i]);
+			}
+			console.log("finalNames");
+			console.log(finalNames);
+			return finalNames;
+
+		}
+		function processarraydata(allval){
+			var maindata=new Array();
+			var j=0;
+				for(var i=0;i<allval.length;i++){
+                      
+				var test=allval[i].toString().split(',');
+                var row = {};
+				row["Name"]=test[0];
+				row["Id"]=test[1];
+				maindata.push(row);
+				j++;
+                   
+			}
+			
+			
+            console.log("data");
+            console.log(maindata);
+			 return maindata;
+		}
+        function errorHandler(evt) {
+            if (evt.target.error.name == "NotReadableError") {
+                alert("Canno't read file !");
+            }
+        }
+        function grouping() {
+            debugger;
+            var namespergroup = parseInt($('.pergroup').val()),
+            allnames=mainarray.slice();
+            allnameslen = allnames.length;
+            console.log("allnames")
+            console.log(allnames);
+
+            var numgroups = Math.ceil(allnameslen / namespergroup);
+
+            if ($('.numgroups').val()) {
+                numgroups = parseInt($('.numgroups').val());
+                namespergroup = allnameslen / numgroups;
+            }
+            $('.groups').append('<div class="divSubGrp' + grpingCount + '"></div>');
+            var appendTo = '.divSubGrp' + grpingCount;
+            for (i = 0; i < numgroups; i++) {
+                $(appendTo).append('<div class="groupDiv group' + grpingCount + '" id="group' + (i + 1) + '"><h2>Group ' + (i + 1) + '</h2></div>');
+            }
+
+            $('.group' + grpingCount + '').each(function () {
+                for (j = 0; j < namespergroup; j++) {
+                    var randname = Math.floor(Math.random() * allnames.length);
+                    if (allnames[randname]) {
+                        $(this).append('<p>' + allnames[randname] + '</p>');
+                    }
+                    allnames.splice(randname, 1);
+                    console.log(allnames);
+                }
+            });
+            grpingCount++;
+        }
+
+        function toggle_wrap() {
+            $('.wrap').toggleClass('alt');
+            $('.pergroup-wrap, .numgroups-wrap').find('input').val('');
+        }
+
+    </script>
+</head>
+<body class='default' onload="mystaticfun()">
+    <div align="center">
+        <form class="form-horizontal well">
+            <legend>
+                <h3>
+                    <div id="title">CSV File Team Generator</div>
+                </h3>
+            </legend>
+
+                <label for="csvFileInput">
+                    <strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CSV File:</strong>
+                </label>
+                <input type="file" id="csvFileInput" onchange="handleFiles(this.files)"
+                       accept=".csv">
+        </form>
+    </div>
+    <div align="center">
+    <div id='jqxWidget' style="font-size: 13px; font-family: Verdana; float: center;">
+        <div id="jqxgrid"></div>
+    </div>
+    </div>
+    <div class="wrap alt divGroup">
+        <p class="toggle-wrap" onclick="toggle_wrap()">Number of People per group <a class="choice" href="#choice"><strong>TOGGLE</strong><span class="switch"></span></a> Number of Groups</p>
+        <p class="pergroup-wrap">Number of students per group: <input class="pergroup" type="integer" value=""></p>
+        <p class="numgroups-wrap">Number of groups: <input class="numgroups" type="integer" value=""></p>
+        <button onclick="grouping()">Make Groups</button>
+        <div class="groups">Groups Displayed <br></div>
+    </div>
+</body>
+</html>
